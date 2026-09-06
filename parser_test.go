@@ -1,7 +1,7 @@
 package main
 
 import (
-	"slices"
+	"bytes"
 	"testing"
 )
 
@@ -11,13 +11,13 @@ func TestExtractDomains(t *testing.T) {
 	tests := []struct {
 		name        string
 		payload     []byte
-		wantDomains []string
+		wantDomains []byte
 		wantErr     bool
 	}{
 		{
 			name:        "Valid Payload",
 			payload:     mockPayload,
-			wantDomains: []string{"apple.com", "www.apple.com"},
+			wantDomains: []byte(`"apple.com", "www.apple.com"`),
 			wantErr:     false,
 		},
 
@@ -27,6 +27,20 @@ func TestExtractDomains(t *testing.T) {
 			wantDomains: nil,
 			wantErr:     false,
 		},
+
+		{
+			name:        "Malformed Payload - Missing colon",
+			payload:     []byte(`{"data":{"leaf_cert":{"all_domains" ["apple.com", "www.apple.com"]}}}`),
+			wantDomains: nil,
+			wantErr:     true,
+		},
+
+		{
+			name:        "Malformed Payload - Cut off Payload",
+			payload:     []byte(`{"data":{"leaf_cert":{"all_domains":[`),
+			wantDomains: nil,
+			wantErr:     true,
+		},
 	}
 
 	for _, tt := range tests {
@@ -34,10 +48,10 @@ func TestExtractDomains(t *testing.T) {
 			got, err := extractDomains(tt.payload)
 
 			if (err != nil) != tt.wantErr {
-				t.Errorf("ExtractDomains() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Expected error = %v, got %v", tt.wantErr, err)
 			}
-			if !slices.Equal(got, tt.wantDomains) {
-				t.Errorf("ExtractDomains() = %v, want %v", got, tt.wantDomains)
+			if !bytes.Equal(got, tt.wantDomains) {
+				t.Errorf("Expected domains = %v, got %v", string(tt.wantDomains), string(got))
 			}
 		})
 	}

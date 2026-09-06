@@ -1,27 +1,58 @@
 package main
 
-import "encoding/json"
+import (
+	"bytes"
+	"errors"
+)
 
-type CertStreamMessage struct {
-	Data CertData `json:"data"`
+// exact match for "all_domains" key in JSON from where we need to extract domains
+var domainKey = []byte(`"all_domains"`)
+
+// identify whitespace
+func isWhitespace(b byte) bool {
+	return b == ' ' || b == '\t' || b == '\n' || b == '\r'
 }
-
-type CertData struct {
-	LeafCert LeafCert `json:"leaf_cert"`
-}
-
-type LeafCert struct {
-	AllDomains []string `json:"all_domains"`
-}
-
-func extractDomains(payload []byte) ([]string, error) {
-	var msg CertStreamMessage
-
-	err := json.Unmarshal(payload, &msg)
-	if err != nil {
-		return nil, err
-
+func extractDomains(payload []byte) ([]byte, error) {
+	// find the start -> `"`
+	startIdx := bytes.Index(payload, domainKey)
+	if startIdx == -1 {
+		return nil, nil
 	}
 
-	return msg.Data.LeafCert.AllDomains, nil
+	// cursor starts after `"all_domains"`
+	cursor := startIdx + len(domainKey)
+
+	// skip any whitespaces before ':'
+	for cursor < len(payload) && isWhitespace(payload[cursor]) {
+		cursor++
+	}
+
+	// check if colon exists
+	if cursor >= len(payload) || payload[cursor] != ':' {
+		return nil, errors.New("invalid/malformed payload: missing colon(:)")
+	}
+
+	// move forward ':'
+	cursor++
+
+	// skip nay whitespace before '['
+	for cursor < len(payload) && isWhitespace(payload[cursor]) {
+		cursor++
+	}
+
+	// check if '[' exists
+	if cursor >= len(payload) || payload[cursor] != '[' {
+		return nil, errors.New("invalid/malformed payload: missing opening bracket([)")
+	}
+	// move forward '['
+	cursor++
+
+	// find the closing ']'
+	offset := bytes.IndexByte(payload[cursor:], ']')
+	if offset == -1 {
+		return nil, errors.New("invalid/malformed payload: missing closing bracket(])")
+	}
+
+	// return
+	return payload[cursor : cursor+offset], nil
 }
