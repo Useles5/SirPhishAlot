@@ -1,4 +1,4 @@
-package main
+package parser
 
 import (
 	"bytes"
@@ -12,7 +12,7 @@ var domainKey = []byte(`"all_domains"`)
 func isWhitespace(b byte) bool {
 	return b == ' ' || b == '\t' || b == '\n' || b == '\r'
 }
-func extractDomains(payload []byte) ([]byte, error) {
+func ExtractDomains(payload []byte) ([]byte, error) {
 	// find the start -> `"`
 	startIdx := bytes.Index(payload, domainKey)
 	if startIdx == -1 {

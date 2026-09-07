@@ -1,4 +1,4 @@
-package main
+package parser
 
 import (
 	"bytes"
@@ -45,7 +45,7 @@ func TestExtractDomains(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := extractDomains(tt.payload)
+			got, err := ExtractDomains(tt.payload)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Expected error = %v, got %v", tt.wantErr, err)
@@ -62,6 +62,6 @@ func BenchmarkExtractDomains(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_, _ = extractDomains(mockPayload)
+		_, _ = ExtractDomains(mockPayload)
 	}
 }

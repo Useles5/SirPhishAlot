@@ -8,6 +8,10 @@
 *.so
 *.dylib
 
+*.jsonl
+/sirphishalot
+/tmp
+
 # Test binary, built with `go test -c`
 *.test
 
