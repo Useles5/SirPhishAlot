@@ -18,12 +18,26 @@ func main() {
 		}
 		defer r.Body.Close()
 
-		// extract the domains
-		_, err = parser.ExtractDomains(body)
+		domainsList, err := parser.ExtractDomains(body)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
+			http.Error(w, "Failed to extract domains", http.StatusBadRequest)
 		}
+		// initialize scanner
+		scanner := parser.NewDomainScanner(domainsList)
+		count := 0
+
+		for {
+			domain, hasNext := scanner.Next()
+			if !hasNext {
+				break // no more domain
+			}
+
+			// TODO: Send to Redpanda/NATS
+			log.Printf("Found domain: %s", domain)
+			count++
+		}
+
+		log.Printf("Successfully ingested %d domains", count)
 
 		// send OK header
 		w.WriteHeader(http.StatusOK)
