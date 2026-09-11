@@ -1,0 +1,15 @@
+# config.toml
+
+[stream]
+url = "ws://localhost:9000"
+
+[[brand]]
+name = "Amazon"
+domains = ["amazon.com"]
+
+[[brand]]
+name = "PayPal"
+domains = ["paypal.com"]
+
+[output]
+level = "info"
