@@ -40,6 +40,7 @@ url = "ws://loclhost:9000"`,
 			dir := t.TempDir()
 			path := filepath.Join(dir, "config.toml")
 
+			// create config file
 			//0, 6 -> read+write access to user, 4 -> read access to group, 4 -> read access to others
 			if err := os.WriteFile(path, []byte(tt.config), 0644); err != nil {
 				t.Fatal(err)
