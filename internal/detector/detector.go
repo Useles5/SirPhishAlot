@@ -28,7 +28,7 @@ func (d *Detector) Detect(hostname string) (*config.Brand, error) {
 		return nil, err
 	}
 
-	brand, _ := d.matcher.Match(domain)
+	brand, _ := d.matcher.MatchDomain(domain)
 	// if ok -> false, it means the domain is not cof
 	//if !ok {
 	//	return nil, nil

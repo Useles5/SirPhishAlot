@@ -64,20 +64,20 @@ func TestNewMatcher(t *testing.T) {
 				t.Fatal("NewMatcher() matcher = nil, want non-nil")
 			}
 
-			if brand, ok := matcher.Match("amazon.com"); !ok || brand.Name != "Amazon" {
-				t.Fatalf(`Match("amazon.com") = (%v, %v), want (Amazon, true)`, brand, ok)
+			if brand, ok := matcher.MatchDomain("amazon.com"); !ok || brand.Name != "Amazon" {
+				t.Fatalf(`MatchDomain("amazon.com") = (%v, %v), want (Amazon, true)`, brand, ok)
 			}
 
-			if brand, ok := matcher.Match("mycompany.com"); !ok || brand.Name != "My Company" {
-				t.Fatalf(`Match("mycompany.com") = (%v, %v), want ("My Company", true)`, brand, ok)
+			if brand, ok := matcher.MatchDomain("mycompany.com"); !ok || brand.Name != "My Company" {
+				t.Fatalf(`MatchDomain("mycompany.com") = (%v, %v), want ("My Company", true)`, brand, ok)
 			}
 
-			if brand, ok := matcher.Match("mycompany.co.uk"); !ok || brand.Name != "My Company" {
-				t.Fatalf(`Match("mycompany.co.uk") = (%v, %v), want ("My Company", true)`, brand, ok)
+			if brand, ok := matcher.MatchDomain("mycompany.co.uk"); !ok || brand.Name != "My Company" {
+				t.Fatalf(`MatchDomain("mycompany.co.uk") = (%v, %v), want ("My Company", true)`, brand, ok)
 			}
 
-			if brand, ok := matcher.Match("unknown.com"); ok || brand != nil {
-				t.Fatalf(`Match("unknown.com") = (%v, %v), want (nil, false)`, brand, ok)
+			if brand, ok := matcher.MatchDomain("unknown.com"); ok || brand != nil {
+				t.Fatalf(`MatchDomain("unknown.com") = (%v, %v), want (nil, false)`, brand, ok)
 			}
 		})
 	}

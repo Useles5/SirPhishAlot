@@ -32,7 +32,7 @@ func NewMatcher(cfg *config.Config) (*Matcher, error) {
 	return m, nil
 }
 
-func (m *Matcher) Match(registeredDomain string) (*config.Brand, bool) {
+func (m *Matcher) MatchDomain(registeredDomain string) (*config.Brand, bool) {
 	brand, ok := m.domains[registeredDomain]
 	return brand, ok
 }
